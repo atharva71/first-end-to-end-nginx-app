@@ -1,35 +1,91 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="UTF-8">
     <title>DevOps Store</title>
 </head>
 
 <body>
+
     <h1>Products 🚀</h1>
 
     <ul id="products"></ul>
 
+    <h2>Cart 🛒</h2>
+
+    <ul id="cart"></ul>
+
     <script>
-        fetch('http://13.200.57.81:30081/products')
-            .then(response => response.json())
-            .then(data => {
 
-                const productList = document.getElementById('products');
+        const API_URL = 'http://13.200.57.81:30081';
 
-                data.forEach(product => {
+        async function loadProducts() {
 
-                    const li = document.createElement('li');
+            const response = await fetch(`${API_URL}/products`);
 
-                    li.textContent =
-                        `${product.name} - ₹${product.price}`;
+            const products = await response.json();
 
-                    productList.appendChild(li);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching products:', error);
+            const productList =
+                document.getElementById('products');
+
+            productList.innerHTML = '';
+
+            products.forEach(product => {
+
+                const li = document.createElement('li');
+
+                li.innerHTML = `
+                    ${product.name} - ₹${product.price}
+                    <button onclick="addToCart('${product.name}')">
+                        Add to Cart
+                    </button>
+                `;
+
+                productList.appendChild(li);
             });
+        }
+
+        async function addToCart(productName) {
+
+            await fetch(
+                `${API_URL}/cart?product=${productName}`,
+                {
+                    method: 'POST'
+                }
+            );
+
+            loadCart();
+        }
+
+        async function loadCart() {
+
+            const response =
+                await fetch(`${API_URL}/cart`);
+
+            const cart = await response.json();
+
+            const cartList =
+                document.getElementById('cart');
+
+            cartList.innerHTML = '';
+
+            cart.forEach(item => {
+
+                const li =
+                    document.createElement('li');
+
+                li.textContent = item;
+
+                cartList.appendChild(li);
+            });
+        }
+
+        loadProducts();
+        loadCart();
+
     </script>
 
 </body>
+
 </html>
