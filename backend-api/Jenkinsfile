@@ -1,0 +1,30 @@
+pipeline {
+
+    agent { label 'docker' }
+
+    stages {
+
+        stage('Build Backend Image') {
+            steps {
+                dir('backend-api') {
+                    sh 'docker build -t backend-api .'
+                }
+            }
+        }
+
+        stage('Load Backend Image Into KIND') {
+            steps {
+                sh 'kind load docker-image backend-api'
+            }
+        }
+
+        stage('Deploy Backend') {
+            steps {
+                dir('backend-api') {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                }
+            }
+        }
+    }
+}
