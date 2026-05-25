@@ -5,7 +5,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+              dir ('frontend'){
                 sh 'docker build -t my-nginx .'
+                }
             }
         }
 
