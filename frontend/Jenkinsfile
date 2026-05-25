@@ -17,8 +17,10 @@ pipeline {
 
         stage('Deploy To Kubernetes') {
             steps {
+		dir('frontend') {
                 sh 'kubectl apply -f deployment.yaml'
                 sh 'kubectl apply -f service.yaml'
+                }
             }
         }
 
